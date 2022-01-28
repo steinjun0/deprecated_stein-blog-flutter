@@ -66,6 +66,19 @@ class PostDetail extends StatelessWidget {
                           data: postDetailController.isLoading()
                               ? 'loading...'
                               : postDetailController.postDetail['html'],
+                          style: {
+                            "pre": Style(
+                              padding: EdgeInsets.fromLTRB(12, 16, 12, 0),
+                              backgroundColor: Colors.grey[300],
+                              lineHeight: LineHeight.number(1.5),
+                            ),
+                            "blockquote": Style(
+                              padding: EdgeInsets.fromLTRB(12, 12, 12, 12),
+                              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              backgroundColor: Colors.grey[300],
+                              fontStyle: FontStyle.italic,
+                            ),
+                          },
                         ),
                       ],
                     ),
