@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-const serverHost = "http://172.30.126.146/api";
+const serverHost = "http://172.30.69.85/api";
 
 Future getAPI(apiUrl, {Map<String, dynamic> queryParameter = const {}}) async {
   var url =

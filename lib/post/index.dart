@@ -18,26 +18,59 @@ class PostDetail extends StatelessWidget {
         body: GetBuilder<PostDetailController>(builder: (context) {
           return SingleChildScrollView(
             child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Text(
-                      '${postDetailController.isLoading() ? 'loading' : postDetailController.postDetail['title']}',
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 16, 12, 8),
+                    child: Column(
+                      children: [
+                        Text(
+                          '${postDetailController.isLoading() ? 'loading' : postDetailController.postDetail['title']}',
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.w500),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                '${postDetailController.isLoading() ? 'loading' : postDetailController.postDetail['sub_title']}',
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Text(
+                          '${postDetailController.isLoading() ? 'loading' : postDetailController.getCleanDateString(postDetailController.postDetail['created_at'])}',
+                          style:
+                              TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      height: 30,
+                  ),
+                  Divider(
+                    color: Colors.blueGrey,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                    child: Column(
+                      children: [
+                        // Text('${postDetailController.postDetail}'),
+                        Html(
+                          data: postDetailController.isLoading()
+                              ? 'loading...'
+                              : postDetailController.postDetail['html'],
+                        ),
+                      ],
                     ),
-                    // Text('${postDetailController.postDetail}'),
-                    Html(
-                      data: postDetailController.isLoading()
-                          ? 'loading...'
-                          : postDetailController.postDetail['html'],
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
             ),
           );
@@ -52,6 +85,10 @@ class PostDetailController extends GetxController {
 
   String cleanTitleString(title) {
     return title.replaceAll('\\', ' ');
+  }
+
+  String getCleanDateString(date) {
+    return date.substring(0, 10) + ' ' + date.substring(11, 19);
   }
 
   void getPostDetail() async {
