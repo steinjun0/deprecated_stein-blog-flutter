@@ -78,6 +78,16 @@ class PostDetail extends StatelessWidget {
                               backgroundColor: Colors.grey[300],
                               fontStyle: FontStyle.italic,
                             ),
+                            "p": Style(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              lineHeight: LineHeight.number(1.2),
+                            ),
+                            "h1": Style(
+                              // padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              margin: EdgeInsets.fromLTRB(0, 8, 0, 8),
+                              lineHeight: LineHeight.number(1.2),
+                            )
                           },
                         ),
                       ],
