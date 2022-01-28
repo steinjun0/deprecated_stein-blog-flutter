@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-const serverHost = "http://localhost/api";
+const serverHost = "http://172.30.126.146/api";
 
 Future getAPI(apiUrl, {Map<String, dynamic> queryParameter = const {}}) async {
   var url =
@@ -24,6 +24,18 @@ Future<List> getCategoryFilteredList(List<String> categories) async {
 
 Future getMainPageList() async {
   http.Response response = await getAPI('/blog/post/get_main_page_list');
+  // print(jsonDecode(utf8.decode(response.bodyBytes)));
+  return jsonDecode(utf8.decode(response.bodyBytes)); // jsonDecode는 list를 반환한다.
+}
+
+Future getPostList() async {
+  http.Response response = await getAPI('/blog/post/');
+  // print(jsonDecode(utf8.decode(response.bodyBytes)));
+  return jsonDecode(utf8.decode(response.bodyBytes)); // jsonDecode는 list를 반환한다.
+}
+
+Future getPostDetail(id) async {
+  http.Response response = await getAPI('/blog/post/$id');
   // print(jsonDecode(utf8.decode(response.bodyBytes)));
   return jsonDecode(utf8.decode(response.bodyBytes)); // jsonDecode는 list를 반환한다.
 }

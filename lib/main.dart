@@ -1,42 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:stein_blog/post/index.dart';
 
 import 'API.dart' as API;
 
-void main() => runApp(MaterialApp(home: Home()));
+void main() => runApp(
+      GetMaterialApp(
+        theme: ThemeData(
+            colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.blueGrey,
+        )),
+        getPages: [
+          GetPage(
+            name: '/',
+            page: () => Home(),
+          ),
+          GetPage(
+            name: '/post/:param',
+            page: () => PostDetail(),
+          ),
+        ],
+      ),
+    );
 
 class Home extends StatelessWidget {
   final postController = Get.put(PostController());
-  var count = 0.obs;
+
+  Home({Key? key}) : super(key: key) {
+    postController.getPosts();
+  }
 
   @override
   Widget build(context) => Scaffold(
         appBar: AppBar(
-          title: Text("counter"),
+          title: Text("stein blog"),
         ),
         body: GetBuilder<PostController>(
           builder: (context) {
             return Center(
-              child: Column(children: [
-                ElevatedButton(
-                    onPressed: postController.getMainPagePosts,
-                    child: const Text('get Main List')),
-                Expanded(
-                  child: ListView.separated(
-                    itemCount: postController.postsTextList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          child: postController.postsTextList[index],
-                        ),
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) =>
-                        const Divider(),
-                  ),
-                ),
-              ]),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Stein Blog',
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                        itemCount: postController.postList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return InkWell(
+                            onTap: () => {
+                              Get.toNamed(
+                                  '/post/${postController.posts[index]['id']}')
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                constraints: BoxConstraints(minHeight: 50),
+                                child: postController.postList[index],
+                              ),
+                            ),
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) =>
+                            const Divider(),
+                      ),
+                    ),
+                  ]),
             );
           },
         ),
@@ -44,8 +78,8 @@ class Home extends StatelessWidget {
 }
 
 class PostController extends GetxController {
-  Map<String, List> posts = {'programming': [], 'camera': [], 'music': []};
-  List<Widget> postsTextList = [];
+  List posts = [];
+  List<Widget> postList = [];
 
   Widget getPostWidget(String category, String title) {
     return Expanded(
@@ -70,7 +104,7 @@ class PostController extends GetxController {
               Flexible(
                 child: Text(
                   title,
-                  style: TextStyle(fontSize: 24),
+                  style: TextStyle(fontSize: 20),
                 ),
               ),
             ],
@@ -80,57 +114,30 @@ class PostController extends GetxController {
     );
   }
 
-  void getMainPagePosts() async {
-    posts = Map<String, List>.from(await API.getMainPageList());
+  String cleanTitleString(title) {
+    return title.replaceAll('\\', ' ');
+  }
+
+  void getPosts() async {
+    posts = await API.getPostList();
+    // posts = Map<String, List>.from(await API.getPostList());
     update();
-    postsTextList = [];
-    for (var i = 0; i < posts['programming']!.length; i++) {
-      postsTextList.add(Column(
+    postList = [];
+    String categoriesText = '';
+    for (var i = 0; i < posts.length; i++) {
+      categoriesText = '';
+      posts[i]['categories'].forEach((category) {
+        categoriesText += '${category['name']}, ';
+      });
+      categoriesText = categoriesText.substring(0, categoriesText.length - 2);
+      posts[i]['title'] = cleanTitleString(posts[i]['title']);
+      postList.add(Column(
         children: [
           Row(
-            children: [
-              getPostWidget('programming', posts['programming']![i]['title'])
-            ],
+            children: [getPostWidget('[$categoriesText]', posts[i]['title'])],
           )
         ],
       ));
     }
-  }
-
-  ListView getMainPagePostsListView() {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 18),
-      itemBuilder: (context, index) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4.0),
-              child: Row(
-                children: [
-                  Text(
-                    'programming',
-                    style: TextStyle(fontSize: 12),
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Row(
-                children: [
-                  Text(
-                    'test',
-                    softWrap: true,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 24),
-                  ),
-                ],
-              ),
-            )
-          ],
-        );
-      },
-    );
   }
 }
